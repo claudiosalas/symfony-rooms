@@ -15,10 +15,25 @@ class LuckyController extends Controller
     public function indexAction($max)
     {
         $number = mt_rand(0, $max);
-	$_format = "html";
+        $_format = "html";
         return $this->render('lucky/number.'.$_format.'.twig', array(
-            'number' => $number,
+            'number' => $this->createNewProduct($number),
         ));
+    }
+
+    public function createNewProduct($number = 0)
+    {
+        $product = new Product();
+        $product->setName('Product - '.$number);
+        $product->setPrice($number + 0.99);
+        $product->setDescription('A description about the Product - '.$number);
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->persist($product);
+        $entityManager->flush();
+
+        return $product->getId();
     }
 }
 
